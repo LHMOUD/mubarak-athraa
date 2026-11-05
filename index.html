@@ -42,6 +42,7 @@ h1 i{font-style:normal;color:var(--olive);font-weight:300;margin:0 8px}
 h2{font-size:22px;font-weight:700;color:var(--olive);margin-bottom:18px}
 .date{font-size:56px;font-weight:800;letter-spacing:.12em;color:var(--olive);line-height:1.1;margin:6px 0}
 .row{font-size:22px;margin:4px 0}
+.addr{font-weight:300;font-size:17px;color:var(--soft);margin-top:6px}
 .row b{font-weight:800}
 .cd{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
 .cd div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 4px}
@@ -105,6 +106,7 @@ body.lock{overflow:hidden;height:100vh}
   <div class="date">٢٥ . ١١</div>
   <p class="row">الساعة <b>٨ مساءً</b></p>
   <p class="row">قاعة <b>الخاتونه</b></p>
+  <p class="addr">النجف الأشرف — شارع الصيرفات<br>متفرع من شارع الروان</p>
 </section>
 
 <section class="reveal">
@@ -153,7 +155,7 @@ tick();setInterval(tick,1000);
 document.getElementById('map').href='https://maps.app.goo.gl/csor94VGExou3BWE9';
 const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Bluray Media Studio//AR','BEGIN:VEVENT',
  'UID:wedding-'+YEAR+'@bluray','DTSTAMP:20260101T000000Z','DTSTART:'+YEAR+'1125T170000Z','DTEND:'+YEAR+'1125T210000Z',
- 'SUMMARY:حفل زفاف مبارك وعذراء','LOCATION:قاعة الخاتونه','END:VEVENT','END:VCALENDAR'].join('\r\n');
+ 'SUMMARY:حفل زفاف مبارك وعذراء','LOCATION:قاعة الخاتونه - النجف الأشرف - شارع الصيرفات','END:VEVENT','END:VCALENDAR'].join('\r\n');
 document.getElementById('cal').href='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
 document.getElementById('share').onclick=async()=>{
   const data={title:'دعوة زفاف مبارك وعذراء',text:'يسعدنا دعوتكم لحضور حفل زفاف مبارك وعذراء — ٢٥/١١ — قاعة الخاتونه',url:location.href};
