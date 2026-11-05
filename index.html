@@ -29,6 +29,11 @@ section:last-of-type{border:0}
 .play span{width:76px;height:76px;border-radius:50%;background:rgba(246,240,230,.92);display:grid;place-items:center}
 .play svg{width:28px;fill:var(--olive);margin-right:-4px}
 .play.hide{opacity:0;pointer-events:none}
+.down{display:flex;flex-direction:column;align-items:center;gap:2px;margin:14px auto 0;color:var(--olive);text-decoration:none;font-weight:700;font-size:15px;opacity:0;pointer-events:none;transition:opacity .6s}
+.down.show{opacity:1;pointer-events:auto}
+.down svg{width:26px;animation:bob 1.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+.hint.gone{display:none}
 .hint{font-size:13px;color:var(--soft);margin-top:12px}
 .mono{height:150px;margin:0 auto 8px;display:block}
 .small{font-weight:300;font-size:18px;color:var(--soft)}
@@ -58,13 +63,14 @@ footer{text-align:center;padding:26px 0 8px;font-size:12px;letter-spacing:.16em;
 
 <section class="hero">
   <div class="video">
-    <video id="v" src="invite.mp4" poster="poster.jpg" playsinline preload="metadata" loop></video>
+    <video id="v" src="invite.mp4" poster="poster.jpg" playsinline preload="metadata"></video>
     <button class="play" id="p" aria-label="تشغيل الدعوة"><span><svg viewBox="0 0 24 24"><path d="M5 3l16 9-16 9z"/></svg></span></button>
   </div>
-  <p class="hint">اضغط لتشغيل الدعوة بالصوت</p>
+  <p class="hint" id="hint">اضغط لتشغيل الدعوة بالصوت</p>
+  <a class="down" id="down" href="#details" aria-label="انزل للتفاصيل"><span>انزل للتفاصيل</span><svg viewBox="0 0 24 24"><path d="M12 4v14M5 12l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 </section>
 
-<section class="reveal">
+<section class="reveal" id="details">
   <img class="mono" src="mono.png" alt="ع م">
   <p class="small">بقلوبٍ يملؤها الفرح يسعدنا دعوتكم لحضور حفل زفاف</p>
   <h1>مبارك<i>&amp;</i>عذراء</h1>
@@ -102,7 +108,11 @@ footer{text-align:center;padding:26px 0 8px;font-size:12px;letter-spacing:.16em;
 <script>
 // ---- video ----
 const v=document.getElementById('v'),p=document.getElementById('p');
+const dn=document.getElementById('down'),hn=document.getElementById('hint'),det=document.getElementById('details');
 p.onclick=()=>{v.muted=false;v.play();p.classList.add('hide')};
+v.addEventListener('ended',()=>{dn.classList.add('show');hn.classList.add('gone');p.classList.remove('hide');setTimeout(()=>det.scrollIntoView({behavior:'smooth',block:'start'}),900)});
+v.addEventListener('play',()=>{dn.classList.remove('show');hn.classList.remove('gone')});
+dn.onclick=e=>{e.preventDefault();det.scrollIntoView({behavior:'smooth',block:'start'})};
 v.onclick=()=>{if(v.paused){v.play();p.classList.add('hide')}else{v.pause();p.classList.remove('hide')}};
 
 // ---- event ----
