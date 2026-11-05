@@ -56,9 +56,33 @@ footer{text-align:center;padding:26px 0 8px;font-size:12px;letter-spacing:.16em;
 .reveal{opacity:0;transform:translateY(18px);transition:opacity .9s ease,transform .9s ease}
 .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+/* ---- envelope intro ---- */
+body.lock{overflow:hidden;height:100vh}
+#ovl{position:fixed;inset:0;z-index:100;background:url(cloth.jpg) center/cover;overflow:hidden;transition:opacity .9s ease;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#ovl.out{opacity:0;pointer-events:none}
+#st{position:absolute;left:50%;top:50%;margin:-480px 0 0 -270px;width:540px;height:960px;transform-origin:center center;direction:rtl}
+#zoom{position:absolute;inset:0;transform-origin:270px 480px;will-change:transform}
+#ecard{position:absolute;left:90px;top:180px;width:360px;height:600px;background:#C9C3B8;box-shadow:0 14px 34px rgba(70,48,42,.38),0 2px 6px rgba(70,48,42,.25);overflow:hidden;display:grid;place-items:center}
+#ecard:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(0,0,0,.06))}
+#ecard img{position:relative;height:190px;opacity:0;transition:opacity 1s .5s}
+#ecard.show img{opacity:1}
+.fw{position:absolute;left:0;top:0;width:540px;height:960px;perspective:1500px;perspective-origin:270px 480px;filter:drop-shadow(4px 9px 9px rgba(60,40,35,.40))}
+.fr{position:absolute;left:0;top:0;width:540px;height:960px;transform-style:preserve-3d}
+.ff{position:absolute;left:0;top:0;width:540px;height:960px;background-size:540px 960px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.ff.b{transform:rotateY(180deg);transform-origin:270px 480px}
+.ff.light{background-image:url(flap.jpg)}.ff.gray{background-image:url(flap_back.jpg)}
+#tap{position:absolute;left:0;width:540px;top:830px;text-align:center}
+#tap span{display:inline-block;padding:12px 26px;border-radius:30px;background:rgba(246,240,230,.92);color:#6F7449;font-weight:700;font-size:20px;box-shadow:0 6px 20px rgba(60,40,30,.25);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 </style>
 </head>
-<body>
+<body class="lock">
+<div id="ovl" role="button" aria-label="اضغط لفتح الدعوة"><div id="st"><div id="zoom">
+  <div id="ecard"><img src="mono.png" alt=""></div>
+  <div class="fw"><div class="fr" id="rl"><div class="ff light a" id="la"></div><div class="ff light b" id="lb"></div></div></div>
+  <div class="fw"><div class="fr" id="rr"><div class="ff gray a" id="ra"></div><div class="ff light b" id="rb"></div></div></div>
+  </div><div id="tap"><span>اضغط على الظرف لفتح الدعوة</span></div></div></div>
 <div class="wrap">
 
 <section class="hero">
@@ -140,6 +164,41 @@ document.getElementById('share').onclick=async()=>{
 // ---- scroll reveal ----
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// ---- envelope intro ----
+(function(){
+ const ovl=document.getElementById('ovl'),st=document.getElementById('st'),$=id=>document.getElementById(id);
+ const fit=()=>{const s=Math.min(innerWidth/540,innerHeight/960)*1.0;st.style.transform=`scale(${s})`;};fit();addEventListener('resize',fit);
+ const CX0=90,CY0=180,CW=360,CH=600,CCX=270,CCY=480;
+ function shape(mirror){const hx=CX0,tip=[CCX+16,CCY],pts=[[hx,CY0]];
+  const edge=(a,b,bumps,amp)=>{const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),nx=dy/L,ny=-dx/L,n=60,o=[];
+   for(let i=1;i<=n;i++){const s=i/n,bump=amp*Math.abs(Math.sin(Math.PI*bumps*s));o.push([a[0]+dx*s+nx*bump,a[1]+dy*s+ny*bump]);}return o;};
+  edge([hx,CY0],[tip[0]-10,tip[1]-14],10,7).forEach(p=>pts.push(p));
+  for(let k=-4;k<=4;k++){const a=k/4*0.9;pts.push([tip[0]-10+Math.cos(a)*10+4,tip[1]+Math.sin(a)*14]);}
+  edge([tip[0]-10,tip[1]+14],[hx,CY0+CH],10,7).forEach(p=>pts.push(p));pts.push([hx,CY0+CH]);
+  return pts.map(([x,y])=>`${(mirror?540-x:x).toFixed(1)}px ${y.toFixed(1)}px`).join(',');}
+ const F=shape(false),M=shape(true);
+ $('la').style.clipPath=`polygon(${F})`;$('lb').style.clipPath=`polygon(${M})`;$('ra').style.clipPath=`polygon(${M})`;$('rb').style.clipPath=`polygon(${F})`;
+ $('rl').style.transformOrigin='90px 480px';$('rr').style.transformOrigin='450px 480px';
+ const ioC=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, outC=t=>1-Math.pow(1-t,3);
+ let started=false;
+ ovl.addEventListener('click',()=>{if(started)return;started=true;$('tap').style.transition='opacity .4s';$('tap').style.opacity=0;
+  const t0=performance.now(),D=2200;
+  const step=now=>{const k=Math.min(1,(now-t0)/D),th=168*ioC(k),dark=.2*Math.sin(th*Math.PI/180);
+   $('rl').style.transform=`rotateY(${-th}deg)`;$('rr').style.transform=`rotateY(${th}deg)`;
+   ['la','lb','ra','rb'].forEach(id=>$(id).style.filter=`brightness(${1-dark})`);
+   if(k>.45)$('ecard').classList.add('show');
+   if(k<1)requestAnimationFrame(step);else finish();};
+  requestAnimationFrame(step);});
+ function finish(){const t0=performance.now(),D=900;
+  const z=now=>{const k=Math.min(1,(now-t0)/D),e=outC(k);
+   $('zoom').style.transform=`scale(${1+.55*e})`;
+   $('rl').style.opacity=$('rr').style.opacity=1-e;
+   if(k<1)requestAnimationFrame(z);else{ovl.classList.add('out');document.body.classList.remove('lock');window.scrollTo(0,0);
+     const v=document.getElementById('v');v.muted=false;v.play().then(()=>document.getElementById('p').classList.add('hide')).catch(()=>{});
+     setTimeout(()=>ovl.remove(),1000);}};
+  requestAnimationFrame(z);}
+})();
 </script>
 </body>
 </html>
