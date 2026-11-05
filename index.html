@@ -152,10 +152,10 @@ function tick(){let ms=TARGET-Date.now();if(ms<0)ms=0;
 tick();setInterval(tick,1000);
 
 // ---- map / calendar / share ----
-document.getElementById('map').href='https://maps.app.goo.gl/csor94VGExou3BWE9';
+document.getElementById('map').href='https://www.google.com/maps/search/?api=1&query=32.00795571349442,44.3572841423672';
 const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Bluray Media Studio//AR','BEGIN:VEVENT',
  'UID:wedding-'+YEAR+'@bluray','DTSTAMP:20260101T000000Z','DTSTART:'+YEAR+'1125T170000Z','DTEND:'+YEAR+'1125T210000Z',
- 'SUMMARY:حفل زفاف مبارك وعذراء','LOCATION:قاعة الخاتونه - النجف الأشرف - شارع الصيرفات','END:VEVENT','END:VCALENDAR'].join('\r\n');
+ 'SUMMARY:حفل زفاف مبارك وعذراء','LOCATION:قاعة الخاتونه - النجف الأشرف - شارع الصيرفات','GEO:32.00795571349442;44.3572841423672','END:VEVENT','END:VCALENDAR'].join('\r\n');
 document.getElementById('cal').href='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
 document.getElementById('share').onclick=async()=>{
   const data={title:'دعوة زفاف مبارك وعذراء',text:'يسعدنا دعوتكم لحضور حفل زفاف مبارك وعذراء — ٢٥/١١ — قاعة الخاتونه',url:location.href};
